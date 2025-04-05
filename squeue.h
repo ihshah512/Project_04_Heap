@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 using namespace std;
 class Grader; // forward declaration (for grading purposes)
 class Tester; // forward declaration (for testing purposes)
@@ -174,5 +175,8 @@ private:
     Post *merge(Post *h1, Post *h2);
     void printPreorder(Post *node) const;
     Post *copySubtree(Post *node);
+    void deleteSubtree(Post* node);
+    void collectNodes(Post* node, vector<Post*>& nodes);
+
 };
 #endif
