@@ -1,0 +1,21 @@
+Dump of the leftist heap queue with priorityFn2 (MINHEAP):
+(((42:860958:0)12:445354:1(17:981168:0))3:543713:2(((51:904337:0)31:399742:1(33:208446:0))28:633661:1((54:717842:0)34:205596:0)))
+
+Dump of the skew heap queue with priorityFn2 (MINHEAP):
+((((54:717842)33:208446)12:445354((42:860958)28:633661))3:543713(((51:904337)31:399742)17:981168(34:205596)))
+
+Preorder traversal of the nodes in the queue with priorityFn2 (MINHEAP):
+Contents of the queue:
+[3] Post#: 543713, likes#: 15, connect level: 2
+[12] Post#: 445354, likes#: 265, connect level: 2
+[33] Post#: 208446, likes#: 221, connect level: 3
+[54] Post#: 717842, likes#: 320, connect level: 4
+[28] Post#: 633661, likes#: 123, connect level: 2
+[42] Post#: 860958, likes#: 125, connect level: 5
+[17] Post#: 981168, likes#: 484, connect level: 1
+[31] Post#: 399742, likes#: 156, connect level: 1
+[51] Post#: 904337, likes#: 473, connect level: 2
+[34] Post#: 205596, likes#: 369, connect level: 5
+
+Dump of the skew queue with priorityFn1 (MAXHEAP):
+((((130:860958)222:208446(125:633661))330:717842)485:981168((((165:399742)275:445354(17:543713))370:205596)483:904337))
