@@ -1,8 +1,8 @@
 // CMSC 341 - Spring 2025 - Project 3
 #ifndef SQUEUE_H
 #define SQUEUE_H
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 using namespace std;
 class Grader; // forward declaration (for grading purposes)
@@ -77,13 +77,34 @@ public:
         m_left = nullptr;
         m_npl = 0;
     }
-    int getPostID() const { return m_postID; }
-    int getNumLikes() const { return m_likes; }
-    int getConnectLevel() const { return m_connectLevel; }
-    int getPostTime() const { return m_postTime; }
-    int getInterestLevel() const { return m_interestLevel; }
-    void setNPL(int npl) { m_npl = npl; }
-    int getNPL() const { return m_npl; }
+    int getPostID() const
+    {
+        return m_postID;
+    }
+    int getNumLikes() const
+    {
+        return m_likes;
+    }
+    int getConnectLevel() const
+    {
+        return m_connectLevel;
+    }
+    int getPostTime() const
+    {
+        return m_postTime;
+    }
+    int getInterestLevel() const
+    {
+        return m_interestLevel;
+    }
+    void setNPL(int npl)
+    {
+        m_npl = npl;
+    }
+    int getNPL() const
+    {
+        return m_npl;
+    }
     // Overloaded insertion operator for Post
     friend ostream &operator<<(ostream &sout, const Post &post);
 
@@ -116,7 +137,9 @@ public:
     friend class Grader; // for grading purposes
     friend class Tester; // for testing purposes
 
-    SQueue() {}
+    SQueue()
+    {
+    }
     SQueue(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure);
     ~SQueue();
     SQueue(const SQueue &rhs);
@@ -150,5 +173,6 @@ private:
      ******************************************/
     Post *merge(Post *h1, Post *h2);
     void printPreorder(Post *node) const;
+    Post *copySubtree(Post *node);
 };
 #endif
