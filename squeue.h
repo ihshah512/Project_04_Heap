@@ -172,7 +172,7 @@ private:
     /******************************************
      * Private function declarations go here! *
      ******************************************/
-    Post *merge(Post *h1, Post *h2);
+    Post *merge(Post *h1, Post *h2);//This 
     void printPreorder(Post *node) const;
     Post *copySubtree(Post *node);
     void deleteSubtree(Post* node);
