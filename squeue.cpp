@@ -61,7 +61,7 @@ Post *SQueue::copySubtree(Post *node)
     return nullptr;
   }
   // If node not null now create a newNode in which we want to copy in and copy root node into it
-  Post *newNode = new Post(*node);
+  Post *newNode = new Post(*node); // here default copy conistructor would get utilized
   // we will follow pre order traversal pattren
   newNode->m_left = copySubtree(node->m_left);
   newNode->m_right = copySubtree(node->m_right);
@@ -89,30 +89,33 @@ void SQueue::mergeWithQueue(SQueue &rhs)
 {
   if (this == &rhs) // if both quees are equal
   {
-    throw domain_error("Cannot merge a queue with itself");
+    throw domain_error("ERROR: Cannot merge a queue with itself");
   }
   // checking contradiction between two heaps
+  // only skwep can be merged with skewHeap structure of heaps
+  // that we are merging must be same either skew heap or leftist heap
+  // Similarly only min heap can be merged into min heap and vice-versa
   if (m_priorFunc != rhs.m_priorFunc || m_structure != rhs.m_structure)
   {
-    throw domain_error("Cannot merge queues with different priority functions or structures");
+    throw domain_error("ERROR: Cannot merge queues with different priority functions or structures");
   }
   m_heap = merge(m_heap, rhs.m_heap);
-  m_size += rhs.m_size;
-  rhs.m_heap = nullptr;
-  rhs.m_size = 0;
+  m_size += rhs.m_size; // adding both the sizes of the heaps
+  rhs.m_heap = nullptr; // once all elements mergred from rhs set rhs to nullptr
+  rhs.m_size = 0;       // set size to 0
 }
 
 // Insert a post
 bool SQueue::insertPost(const Post &post)
 {
-  if (m_priorFunc(post) == 0)
+  if (m_priorFunc(post) == 0) // its neither min or max so return false
   {
     return false;
   }
   Post *newPost = new Post(post);  // create pointer of the post we are trying to insert
   newPost->m_npl = 0;              // set new node npl value
   m_heap = merge(m_heap, newPost); // merge the newnode (heap) into existing heap
-  m_size++;                        // increate the size of the current heap
+  m_size++;                        // since we are inserting the node so bump the size by 1
   return true;
 }
 
@@ -135,10 +138,10 @@ Post SQueue::getNextPost()
   {
     throw out_of_range("Queue is empty");
   }
-  Post *highest = m_heap;
-  m_heap = merge(highest->m_left, highest->m_right);
-  m_size--;
-  Post result = *highest;
+  Post *highest = m_heap;//stroing the root node in highest this is the one has highest priorty and will get removed
+  m_heap = merge(highest->m_left, highest->m_right); //merge two heaps left and right
+  m_size--; //decrement the size of heap
+  Post result = *highest; //dererfening the pointer and storing it in reuslt
   delete highest;
   return result;
 }
