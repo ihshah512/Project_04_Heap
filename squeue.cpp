@@ -108,15 +108,16 @@ void SQueue::mergeWithQueue(SQueue &rhs)
 // Insert a post
 bool SQueue::insertPost(const Post &post)
 {
-  if (m_priorFunc(post) == 0) // its neither min or max so return false
-  {
-    return false;
-  }
-  Post *newPost = new Post(post);  // create pointer of the post we are trying to insert
-  newPost->m_npl = 0;              // set new node npl value
-  m_heap = merge(m_heap, newPost); // merge the newnode (heap) into existing heap
-  m_size++;                        // since we are inserting the node so bump the size by 1
-  return true;
+    if (m_priorFunc(post) == 0 || post.getPostID() == DEFAULTPOSTID ||
+        post.getPostTime() == MAXTIME || post.getConnectLevel() == MAXCONLEVEL)
+    {
+        return false;
+    }
+    Post *newPost = new Post(post);
+    newPost->m_npl = 0;
+    m_heap = merge(m_heap, newPost);
+    m_size++;
+    return true;
 }
 
 // Number of posts

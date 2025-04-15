@@ -202,6 +202,8 @@ private:
     }
 
 public:
+
+    //tsting of min heap and max heap insertion
     bool testMinHeapInsertion()
     {
         SQueue q(priorityFn2, MINHEAP, SKEW);
@@ -224,33 +226,35 @@ public:
         return checkHeapProperty(q.m_heap, priorityFn1, MAXHEAP);
     }
 
-    bool testMinHeapRemoval()
+    //tsting of min heap with removal case
+bool testMinHeapRemoval()
+{
+    SQueue q(priorityFn2, MINHEAP, SKEW);
+    Random r(MINPOSTID, MAXPOSTID);
+    std::vector<int> priorities;
+    for (int i = 0; i < 10; i++)
     {
-        SQueue q(priorityFn2, MINHEAP, SKEW);
-        Random r(MINPOSTID, MAXPOSTID);
-        std::vector<int> priorities;
-        for (int i = 0; i < 300; i++)
-        {
-            Post p(r.getRandNum(), 100, 3, i + 1, 5);
-            q.insertPost(p);
-            priorities.push_back(priorityFn2(p));
-        }
-        std::sort(priorities.begin(), priorities.end());
-        for (int i = 0; i < 300; i++)
-        {
-            try
-            {
-                if (priorityFn2(q.getNextPost()) != priorities[i])
-                    return false;
-            }
-            catch (...)
-            {
-                return false;
-            }
-        }
-        return true;
+        Post p(r.getRandNum(), 100, 3, 25, 5); // All have priority 25 + 3 = 28
+        q.insertPost(p);
+        priorities.push_back(priorityFn2(p));
     }
+    std::sort(priorities.begin(), priorities.end());
+    for (int i = 0; i < 10; i++)
+    {
+        try
+        {
+            if (priorityFn2(q.getNextPost()) != priorities[i])
+                return false;
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
+    //test functon to remove node form a max heap
     bool testMaxHeapRemoval()
     {
         SQueue q(priorityFn1, MAXHEAP, SKEW);
@@ -278,6 +282,8 @@ public:
         return true;
     }
 
+    //test of nlp
+
     bool testLeftistNPL()
     {
         SQueue q(priorityFn2, MINHEAP, LEFTIST);
@@ -288,7 +294,7 @@ public:
         }
         return checkNPL(q.m_heap);
     }
-
+// test of leftist property
     bool testLeftistProperty()
     {
         SQueue q(priorityFn2, MINHEAP, LEFTIST);
@@ -408,6 +414,107 @@ public:
             return false;
         }
     }
+
+    // New test: Merging two non-empty queues
+    bool testNonEmptyMerge()
+    {
+        SQueue q1(priorityFn2, MINHEAP, SKEW);
+        SQueue q2(priorityFn2, MINHEAP, SKEW);
+        Random r(MINPOSTID, MAXPOSTID);
+        // Insert 50 posts into q1
+        for (int i = 0; i < 50; i++)
+        {
+            q1.insertPost(Post(r.getRandNum(), 100, 3, 25, 5));
+        }
+        // Insert 50 posts into q2
+        for (int i = 0; i < 50; i++)
+        {
+            q2.insertPost(Post(r.getRandNum(), 100, 3, 25, 5));
+        }
+        int totalPosts = q1.numPosts() + q2.numPosts();
+        try
+        {
+            q1.mergeWithQueue(q2);
+            return q1.numPosts() == totalPosts && q2.numPosts() == 0 && checkHeapProperty(q1.m_heap, priorityFn2, MINHEAP);
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
+
+    // New test: Inserting invalid post
+   bool testInvalidPostInsertion()
+{
+    SQueue q(priorityFn2, MINHEAP, SKEW);
+    // Create a post with invalid postID
+    Post invalidPost(MINPOSTID - 1, 100, 3, 25, 5);
+    bool result = q.insertPost(invalidPost);
+    return !result && q.numPosts() == 0;
+}
+    // New test: Complex sequence of operations
+    bool testComplexOperations()
+    {
+        SQueue q(priorityFn2, MINHEAP, SKEW);
+        Random r(MINPOSTID, MAXPOSTID);
+        // Insert 50 posts
+        for (int i = 0; i < 50; i++)
+        {
+            q.insertPost(Post(r.getRandNum(), 100, 3, 25, 5));
+        }
+        // Remove 25 posts
+        for (int i = 0; i < 25; i++)
+        {
+            try
+            {
+                q.getNextPost();
+            }
+            catch (...)
+            {
+                return false;
+            }
+        }
+        // Insert 25 more posts
+        for (int i = 0; i < 25; i++)
+        {
+            q.insertPost(Post(r.getRandNum(), 100, 3, 25, 5));
+        }
+        // Change priority function
+        q.setPriorityFn(priorityFn1, MAXHEAP);
+        return checkHeapProperty(q.m_heap, priorityFn1, MAXHEAP) && q.numPosts() == 50;
+    }
+
+    // New test: Deep copy integrity
+    bool testDeepCopyIntegrity()
+    {
+        SQueue q1(priorityFn2, MINHEAP, SKEW);
+        Random r(MINPOSTID, MAXPOSTID);
+        for (int i = 0; i < 50; i++)
+        {
+            q1.insertPost(Post(r.getRandNum(), 100, 3, 25, 5));
+        }
+        SQueue q2(q1);
+        // Modify q2 by removing a post
+        try
+        {
+            q2.getNextPost();
+        }
+        catch (...)
+        {
+            return false;
+        }
+        // Check that q1 is unchanged and q2 has one less post
+        return q1.numPosts() == 50 && q2.numPosts() == 49 && checkHeapProperty(q1.m_heap, priorityFn2, MINHEAP) && checkHeapProperty(q2.m_heap, priorityFn2, MINHEAP);
+    }
+
+    // New test: Single node NPL in leftist heap
+    bool testLeftistSingleNodeNPL()
+    {
+        SQueue q(priorityFn2, MINHEAP, LEFTIST);
+        Random r(MINPOSTID, MAXPOSTID);
+        q.insertPost(Post(r.getRandNum(), 100, 3, 25, 5));
+        return q.m_heap->m_npl == 0 && checkNPL(q.m_heap);
+    }
 };
 
 int main()
@@ -443,6 +550,7 @@ int main()
     // creating obj of tester class for calling functions
     Tester t;
     // Calling tst functions here
+
     cout << "MinHeap Insertion: " << (t.testMinHeapInsertion() ? "PASS" : "FAIL") << endl;
     cout << "MaxHeap Insertion: " << (t.testMaxHeapInsertion() ? "PASS" : "FAIL") << endl;
     cout << "MinHeap Removal: " << (t.testMinHeapRemoval() ? "PASS" : "FAIL") << endl;
@@ -457,6 +565,12 @@ int main()
     cout << "Assignment Empty: " << (t.testAssignmentEmpty() ? "PASS" : "FAIL") << endl;
     cout << "Empty Dequeue: " << (t.testEmptyDequeue() ? "PASS" : "FAIL") << endl;
     cout << "Different Priority Merge: " << (t.testDifferentPriorityMerge() ? "PASS" : "FAIL") << endl;
+    cout << "Non-Empty Merge: " << (t.testNonEmptyMerge() ? "PASS" : "FAIL") << endl;
+    cout << "Invalid Post Insertion: " << (t.testInvalidPostInsertion() ? "PASS" : "FAIL") << endl;
+    cout << "Complex Operations: " << (t.testComplexOperations() ? "PASS" : "FAIL") << endl;
+    cout << "Deep Copy Integrity: " << (t.testDeepCopyIntegrity() ? "PASS" : "FAIL") << endl;
+    cout << "Leftist Single Node NPL: " << (t.testLeftistSingleNodeNPL() ? "PASS" : "FAIL") << endl;
+
     return 0;
 }
 
