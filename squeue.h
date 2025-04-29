@@ -172,11 +172,11 @@ private:
     /******************************************
      * Private function declarations go here! *
      ******************************************/
-    Post *merge(Post *h1, Post *h2);//This 
+    Post *merge(Post *h1, Post *h2);
     void printPreorder(Post *node) const;
     Post *copySubtree(Post *node);
-    void deleteSubtree(Post* node);
-    void collectNodes(Post* node, vector<Post*>& nodes);
-
+    void deleteSubtree(Post *node);
+    int countNodes(Post *node) const;                       // Newly added
+    void gatherNodes(Post *node, Post **nodes, int &index); // Newly added
 };
 #endif
