@@ -1,7 +1,7 @@
 // CMSC 341 - Spring 2025 - Project 3
 #include "squeue.h"
 #include <iostream>
-using namespace std;
+using namespace std;//included this to avoid writing std in code
 
 // Constructor
 SQueue::SQueue(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure)
@@ -58,63 +58,63 @@ Post *SQueue::copySubtree(Post *node)
     return nullptr;
   }
   Post *newNode = new Post(*node);
-  newNode->m_left = copySubtree(node->m_left);
-  newNode->m_right = copySubtree(node->m_right);
-  newNode->m_npl = node->m_npl;
+  newNode->m_left = copySubtree(node->m_left);//recursive call on left side of tree
+  newNode->m_right = copySubtree(node->m_right);//recursive call on right side of tree
+  newNode->m_npl = node->m_npl;//copying npl values
   return newNode;
 }
 
 // Assignment operator
 SQueue &SQueue::operator=(const SQueue &rhs)
 {
-  if (this != &rhs)
+  if (this != &rhs)//checking self assignment first
   {
-    clear();
+    clear();//clearing out the current node before copying into it
     m_priorFunc = rhs.m_priorFunc;
     m_heapType = rhs.m_heapType;
     m_structure = rhs.m_structure;
-    m_heap = copySubtree(rhs.m_heap);
+    m_heap = copySubtree(rhs.m_heap);//calling helper funciton
     m_size = rhs.m_size;
   }
-  return *this;
+  return *this;//returning the current node
 }
 
 // Merge two queues
 void SQueue::mergeWithQueue(SQueue &rhs)
 {
-  if (this == &rhs)
+  if (this == &rhs) //two same heaps cant be merged thus thorwing error
   {
     throw domain_error("ERROR: Cannot merge a queue with itself");
   }
-  if (m_priorFunc != rhs.m_priorFunc || m_structure != rhs.m_structure)
+  if (m_priorFunc != rhs.m_priorFunc || m_structure != rhs.m_structure) //if prior function or structure of queues are equal they cant be merged
   {
     throw domain_error("ERROR: Cannot merge queues with different priority functions or structures");
   }
-  m_heap = merge(m_heap, rhs.m_heap);
-  m_size += rhs.m_size;
+  m_heap = merge(m_heap, rhs.m_heap); //if none of above two conditions true then merge two heaps
+  m_size += rhs.m_size;//size of incresed by adding size of newly merged heap
   rhs.m_heap = nullptr;
   rhs.m_size = 0;
 }
 
 // Insert a post
 bool SQueue::insertPost(const Post &post)
-{
+{//DO not add the post if post fails any of the folloiwng condition
   if (m_priorFunc(post) == 0 || post.getPostID() == DEFAULTPOSTID ||
       post.getPostTime() == MAXTIME || post.getConnectLevel() == MAXCONLEVEL)
   {
     return false;
   }
-  Post *newPost = new Post(post);
-  newPost->m_npl = 0;
-  m_heap = merge(m_heap, newPost);
-  m_size++;
+  Post *newPost = new Post(post);//create a new post object
+  newPost->m_npl = 0;//since obj itself is at root level so its npl is set to 0
+  m_heap = merge(m_heap, newPost);//merge new post into heap
+  m_size++;//increase the size by one
   return true;
 }
 
 // Number of posts
 int SQueue::numPosts() const
 {
-  return m_size;
+  return m_size;//return heap size
 }
 
 // Get priority function
@@ -126,15 +126,15 @@ prifn_t SQueue::getPriorityFn() const
 // Extract highest priority post
 Post SQueue::getNextPost()
 {
-  if (m_size == 0)
+  if (m_size == 0)//if heap is empty cant get next post
   {
     throw out_of_range("Queue is empty");
   }
-  Post *highest = m_heap;
-  m_heap = merge(highest->m_left, highest->m_right);
+  Post *highest = m_heap;//since highest prioty is at root after getting root two subtrees left; left subtree and right
+  m_heap = merge(highest->m_left, highest->m_right); //subtree now we will merge them and reduce the size of heap by 1.
   m_size--;
-  Post result = *highest;
-  delete highest;
+  Post result = *highest;//returing the node we obtained and removed
+  delete highest; //deallocating mem of higest node
   return result;
 }
 
@@ -143,13 +143,13 @@ int SQueue::countNodes(Post *node) const
 {
   if (node == nullptr)
     return 0;
-  return 1 + countNodes(node->m_left) + countNodes(node->m_right);
-}
+  return 1 + countNodes(node->m_left) + countNodes(node->m_right);//couting left and right nodes recursively and adding 1
+}                                                                 // which is for root node and returning total
 
 // Helper to gather nodes into an array
 void SQueue::gatherNodes(Post *node, Post **nodes, int &index)
 {
-  if (node != nullptr)
+  if (node != nullptr)//gathering nodes into an array by using pre order traversal ROOT-LEFT-RIGHT
   {
     nodes[index++] = node;
     gatherNodes(node->m_left, nodes, index);
@@ -158,7 +158,7 @@ void SQueue::gatherNodes(Post *node, Post **nodes, int &index)
 }
 
 // Set new priority function and rebuild heap
-void SQueue::setPriorityFn(prifn_t priFn, HEAPTYPE heapType)
+void SQueue::setPriorityFn(prifn_t priFn, HEAPTYPE heapType)//passing a typedef's function as argument to set prioty on fly
 {
   m_priorFunc = priFn;
   m_heapType = heapType;
@@ -169,14 +169,14 @@ void SQueue::setPriorityFn(prifn_t priFn, HEAPTYPE heapType)
   int index = 0;
   gatherNodes(m_heap, nodes, index);
   m_heap = nullptr;
-  for (int i = 0; i < nodeCount; i++)
+  for (int i = 0; i < nodeCount; i++)//rebuildig heap from scratch by setting left right nodes to null
   {
     nodes[i]->m_left = nullptr;
     nodes[i]->m_right = nullptr;
     nodes[i]->m_npl = 0;
     m_heap = merge(m_heap, nodes[i]);
   }
-  delete[] nodes;
+  delete[] nodes;//once heap gets recreated delete the nodes array
 }
 
 // Set new structure and rebuild heap
@@ -245,15 +245,15 @@ ostream &operator<<(ostream &sout, const Post &post)
 // Private helper to merge two heaps
 Post *SQueue::merge(Post *h1, Post *h2)
 {
-  if (h1 == nullptr)
+  if (h1 == nullptr)//if h1 is null it means we have nothing to merge thus return h2 and vice versa
     return h2;
   if (h2 == nullptr)
     return h1;
 
   // Compare priorities, with postID as tie-breaker
   bool swapNeeded = false;
-  int pri1 = m_priorFunc(*h1);
-  int pri2 = m_priorFunc(*h2);
+  int pri1 = m_priorFunc(*h1);//by using typedef declation passing dereferened pointer of h1
+  int pri2 = m_priorFunc(*h2);//by using typedef declaration passing dereferenced pointer of h2
   if (m_heapType == MAXHEAP)
   {
     if (pri1 < pri2 || (pri1 == pri2 && h1->m_postID > h2->m_postID))
