@@ -163,6 +163,7 @@ int priorityFn2(const Post &post); // works with a MINHEAP
 class Tester
 {
 public:
+    //THIS FUNCTION will be utilzied as a helper function
     bool checkHeapProperty(Post *node, prifn_t priFn, HEAPTYPE type)
     {
         if (!node)
@@ -191,10 +192,10 @@ public:
     {
         if (!node)
             return true;
-        int leftNPL = node->m_left ? node->m_left->m_npl : -1;
-        int rightNPL = node->m_right ? node->m_right->m_npl : -1;
+        int leftNPL = node->m_left ? node->m_left->m_npl : -1;//if left node is nullptr then set its npl value to -1
+        int rightNPL = node->m_right ? node->m_right->m_npl : -1;//if right node is nullptr then set its npl value to -1
         return (node->m_npl == std::min(leftNPL, rightNPL) + 1) &&
-               (leftNPL >= rightNPL) &&
+               (leftNPL >= rightNPL) &&//in case of skew heap left size npl must be greater than right side npl
                checkNPL(node->m_left) &&
                checkNPL(node->m_right);
     }
