@@ -169,22 +169,22 @@ public:
         if (!node)
             return true;
 
-        int parentPri = priFn(*node);
+        int checkRootPrioity = priFn(*node);//checking the prioty of parent rather its min or max
         if (node->m_left)
         {
             int leftPri = priFn(*node->m_left);
-            if ((type == MAXHEAP && parentPri < leftPri) ||
-                (type == MINHEAP && parentPri > leftPri))
+            if ((type == MAXHEAP && checkRootPrioity < leftPri) ||
+                (type == MINHEAP && checkRootPrioity > leftPri))
                 return false;
         }
         if (node->m_right)
         {
             int rightPri = priFn(*node->m_right);
-            if ((type == MAXHEAP && parentPri < rightPri) ||
-                (type == MINHEAP && parentPri > rightPri))
+            if ((type == MAXHEAP && checkRootPrioity < rightPri) ||
+                (type == MINHEAP && checkRootPrioity > rightPri))
                 return false;
         }
-        return checkHeapProperty(node->m_left, priFn, type) &&
+        return checkHeapProperty(node->m_left, priFn, type) && //if both left and right side meets heap property the return true
                checkHeapProperty(node->m_right, priFn, type);
     }
 
@@ -199,7 +199,7 @@ public:
                checkNPL(node->m_left) &&
                checkNPL(node->m_right);
     }
-
+//in this function we would test min heap insertion after inserting posts we would check the heap property
     bool testMinHeapInsertion()
     {
         SQueue q(priorityFn2, MINHEAP, SKEW);
